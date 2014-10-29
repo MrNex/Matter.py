@@ -1,8 +1,8 @@
 [Activity]
-name = example
-bundle_id = example.laptop.org
+name = Matter
+bundle_id = rit.matter.ID
 icon = exampleicon
-exec = sugar-activity activity.Example
+exec = sugar-activity activity.matteractivity
 show_launcher = yes
 activity_version = 1
-license = GPLv2+
+license = None
