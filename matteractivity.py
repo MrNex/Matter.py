@@ -14,17 +14,14 @@ from sugar3.activity.widgets import StopButton
 sys.path.append('..')	#Import sugargame package from top-level directory
 import sugargame.canvas
 
-import MatterGame
+import matter
 
 class MatterActivity(sugar3.activity.activity.Activity):
 	#Initializes the activity
 	def __init__(self, handle):
-		super(MatterActivity, self).__init__(handle)
+		super(matteractivity, self).__init__(handle)
 
 		self.paused = False
-
-		#Create instance of game
-		self.game = MatterGame.MatterGame()
 
 		#Setup activity stuff
 		self.build_toolar()
@@ -32,7 +29,14 @@ class MatterActivity(sugar3.activity.activity.Activity):
 
 		#Note that set_canvas implicitly calls read_file when resuming from journal
 		self.set_canvas(self._pygamecanvas)
+		self._pygamecanvas.grab_focus()
+
+		#Create instance of game
+		self.game = MatterGame.MatterGame()
+
+		#self.game.run is called whtn the activity constructor returns
 		self._pygamecanvas.run_pygame(self.game.run)
+
 
 	#Sets upthe sugar activity toolbar
 	def build_toolbar(self):

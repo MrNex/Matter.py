@@ -18,7 +18,8 @@ class MatterGame:
 	paused = None
 
 	def __init__(self):
-		self.screen = pygame.display.set_mode((1024, 768))
+		#self.screen = pygame.display.set_mode((1024, 768))
+		self.screen = pygame.display.get_surface()
 		self.clock = pygame.time.Clock()
 		self.spawn_rate = 300
 		self.spawn_timer = 0
@@ -95,6 +96,7 @@ class MatterGame:
 #Program starts here if this file is ran from command line
 def main():
 	pygame.init()
+	pygame.display.set_mode((0, 0), pygame.RESIZABLE)
 	game = MatterGame()
 	game.run()
 	print("closing")
