@@ -7,16 +7,6 @@ from obstacle import Obstacle
 
 class MatterGame:
 
-	#Initialize variables
-	screen = None
-	clock = None
-	spawn_rate = None
-	spawn_timer = None
-	player = None
-	obstacles = None
-	running = None
-	paused = None
-
 	def __init__(self):
 		#self.screen = pygame.display.set_mode((1024, 768))
 		self.screen = pygame.display.get_surface()
@@ -36,7 +26,7 @@ class MatterGame:
 		if(_rnd_state_index == 0): _rnd_state = 'solid'
 		elif(_rnd_state_index == 1): _rnd_state = 'liquid'
 		else: _rnd_state = 'gas'
-		_obstacle = Obstacle(1024, 50, 200, 200, _rnd_state)
+		_obstacle = Obstacle(self.screen.get_width(), 50, 200, 200, _rnd_state)
 		self.obstacles.append(_obstacle)
 
 
