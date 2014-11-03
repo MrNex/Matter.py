@@ -1,14 +1,17 @@
 import pygame.mouse, math
 from object import Object
+from particlesystem import ParticleSystem
 class Player(Object):
-	state = 'solid'
-	swapPointLimit = 5
-	stateSwapPoints = [0, 0, 0]
+	swap_point_limit = 5
+	
 
 	def __init__(self, xPos, yPos, state):
-		Object.__init__(self, xPos, yPos, 200, 200)
+		Object.__init__(self, xPos, yPos, 60, 60)
 		self.state = state
 		self.color = (255, 0, 0)
+		self.state_swap_points = [0, 0, 0]
+		_dx, _dy = self.dimension
+		self.particle_sys = ParticleSystem(xPos, yPos, _dx, _dy)
 
 	def update(self):
 		mouseChange = pygame.mouse.get_rel()
@@ -17,34 +20,40 @@ class Player(Object):
 		y = pow(y, 2)
 		mag = math.sqrt(x + y)
 		self.update_state(mag)
+		
+		#Update particle system's position
+		self.particle_sys.x_position = self.x_position
+		self.particle_sys.y_position = self.y_position
+
+		#Update particle system
+		self.particle_sys.update(self.state)
 
 	def update_state(self, mag):
 		if(mag == 0):
-			self.stateSwapPoints[0] += 1
-			if(self.stateSwapPoints[0] >= self.swapPointLimit):
+			self.state_swap_points[0] += 1
+			if(self.state_swap_points[0] >= self.swap_point_limit):
 				self.state = 'solid'
 				self.color = (255, 0, 0)
-				self.stateSwapPoints[0] = 0
-				self.stateSwapPoints[1] = 0
-				self.stateSwapPoints[2] = 0
+				self.state_swap_points[0] = 0
+				self.state_swap_points[1] = 0
+				self.state_swap_points[2] = 0
 		elif(mag < 50):
-			self.stateSwapPoints[1] += 1
-			if(self.stateSwapPoints[1] >= self.swapPointLimit):
+			self.state_swap_points[1] += 1
+			if(self.state_swap_points[1] >= self.swap_point_limit):
 				self.state = 'liquid'
 				self.color = (0, 0, 255)
-				self.stateSwapPoints[0] = 0
-				self.stateSwapPoints[1] = 0
-				self.stateSwapPoints[2] = 0
+				self.state_swap_points[0] = 0
+				self.state_swap_points[1] = 0
+				self.state_swap_points[2] = 0
 		else:
-			self.stateSwapPoints[2] += 1
-			if(self.stateSwapPoints[2] >= self.swapPointLimit):
+			self.state_swap_points[2] += 1
+			if(self.state_swap_points[2] >= self.swap_point_limit):
 				self.state = 'gas'
 				self.color = (255, 255, 255)
-				self.stateSwapPoints[0] = 0
-				self.stateSwapPoints[1] = 0
-				self.stateSwapPoints[2] = 0
-	
-	def push_left(self):
-		_x, _y = self.position
-		_x -= 2
-		self.position = (_x, _y)
+				self.state_swap_points[0] = 0
+				self.state_swap_points[1] = 0
+				self.state_swap_points[2] = 0
+
+	def draw(self, _screen):
+		#Object.draw(self, _screen)
+		self.particle_sys.draw(_screen)
