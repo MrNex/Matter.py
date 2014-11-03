@@ -8,7 +8,7 @@ class ParticleSystem:
 		self.height = _height
 		Particle.particle_radius = self.width / 6
 		
-		Particle.update_constants()
+		#Particle.update_constants()
 
 		self.particles = []
 		for x in range(0, 9):
