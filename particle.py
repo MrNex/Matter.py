@@ -7,8 +7,8 @@ class Particle(Object):
 	max_flee_weight = 1000		#Weight to use if distance away from flee_location is 0
 
 	solid_max_translation = 1
-	solid_max_offset = 85
-	solid_max_velocity = 80
+	solid_max_offset = 35
+	solid_max_velocity = 30
 	solid_max_ind_force = 50
 	
 

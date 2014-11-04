@@ -13,7 +13,7 @@ class MatterGame:
 		self.clock = pygame.time.Clock()
 		self.spawn_rate = 300
 		self.spawn_timer = 0
-		self.player = Player(400, 400, 'solid')
+		self.player = Player(self.screen.get_width() / 2, self.screen.get_height() / 2, 'solid')
 		self.obstacles = []
 		self.running = 1
 		self.add_random_obstacle()
