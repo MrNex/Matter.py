@@ -26,7 +26,7 @@ class MatterGame:
 		if(_rnd_state_index == 0): _rnd_state = 'solid'
 		elif(_rnd_state_index == 1): _rnd_state = 'liquid'
 		else: _rnd_state = 'gas'
-		_obstacle = Obstacle(self.screen.get_width(), 400, 200, 200, _rnd_state)
+		_obstacle = Obstacle(self.screen.get_width(), 0, 200, self.screen.get_height(), _rnd_state)
 		self.obstacles.append(_obstacle)
 
 
@@ -57,11 +57,12 @@ class MatterGame:
 			#Update Loop for obstacles
 			for _obstacle in self.obstacles:
 				_obstacle.update()
-				if(_obstacle.is_colliding(self.player)):		#Player collision detected 
-					self.player.push_left(Obstacle.movement_speed)	#Push player towards left of screen
-					if(not self.player.is_on_screen()):		#If player is no longer on screen
-						print('Game Over')			#Game over
-						self.running = 0			#Exit loop
+				if(not self.player.state == _obstacle.allowed_state): 
+					if(self.player.is_colliding(_obstacle)):		#Player collision detected 
+						self.player.push_left(Obstacle.movement_speed)	#Push player towards left of screen
+						if(not self.player.is_on_screen()):		#If player is no longer on screen
+							print('Game Over')			#Game over
+							self.running = 0			#Exit loop
 	
 
 			#Screen bounds check

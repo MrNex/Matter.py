@@ -28,6 +28,19 @@ class Player(Object):
 		#Update particle system
 		self.particle_sys.update(self.state)
 
+	def is_colliding(self, object):
+		if(object == self): return false
+		_collided = False
+		_collided = self.particle_sys.resolve_collisions(object)
+		if(not _collided):
+			_collided = Object.is_colliding(self, object)
+		return _collided
+		
+		
+	def push_left(self, _trans):
+		Object.push_left(self, _trans)
+		self.particle_sys.push_left(_trans)
+
 	def update_state(self, mag):
 		if(mag == 0):
 			self.state_swap_points[0] += 1

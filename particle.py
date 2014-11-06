@@ -307,6 +307,25 @@ class Particle(Object):
 		_dist = math.sqrt((self.x_position - _x_pos)**2 + (self.y_position - _y_pos)**2) - (2 * Particle.particle_radius)
 		return _dist
 
+	#Reflects this particles trajectory over the normal to an axis aligned surface
+	#And pushes it out of the collision
+	def resolve_collision(self, _colliding_surface):
+		_velocity = [self.x_velocity, self.y_velocity]
+
+		#Find reflection axis
+		if(_colliding_surface[0] == 0): 	#Reflecting over X
+			_velocity[0] *= -2
+		elif(_colliding_surface[1] == 0):	#Reflecting over Y
+			_velocity[1] *= -2
+
+		#Move position by negative velocity to exit colliding state
+		self.x_position += int(-1*math.floor(self.x_velocity))
+		self.y_position += int(-1*math.floor(self.y_velocity))
+
+		#Change velocity to new velocity
+		self.x_velocity = _velocity[0]
+		self.y_velocity = _velocity[1]
+
 	def draw_shape(self, _screen):
 		#rad = int(Particle.particle_radius)
 		#print(rad)
