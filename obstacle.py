@@ -2,7 +2,6 @@ import pygame.draw
 from player import Player, Object
 
 class Obstacle(Object):
-	movement_speed = 3
 
 
 	def __init__(self, xPos, yPos, xDim, yDim, state):
@@ -14,8 +13,13 @@ class Obstacle(Object):
 		elif(self.allowed_state == 'gas'): self.color = (255, 255, 255)
 
 	def update(self):
-		self.x_position -= Obstacle.movement_speed
+		Object.update(self)
+		#self.x_position -= Obstacle.movement_speed
 
-	def is_colliding(self, player):
-		if(player.state == self.allowed_state): return False
-		return Object.is_colliding(self, player)
+	def is_colliding(self, object):
+		#If it's a player check if it's allowed
+		if(hasattr(object, 'state')):
+			if(object.state == self.allowed_state): 
+				return False
+		#At this point, object is not allowed, test for normal collisions
+		return Object.is_colliding(self, object)

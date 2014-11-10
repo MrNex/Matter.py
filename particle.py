@@ -52,6 +52,7 @@ class Particle(Object):
 
 
 	def update(self, _state, _system_position, _system_radius):
+		Object.update(self)
 		if(_state == 'solid') : 
 			self.solid_update(_system_position)
 		elif(_state == 'liquid') : 
@@ -326,20 +327,20 @@ class Particle(Object):
 		self.x_velocity = _velocity[0]
 		self.y_velocity = _velocity[1]
 
-	def draw_shape(self, _screen):
+	def draw_shape(self, _screen, _camera_x_translation):
 		#rad = int(Particle.particle_radius)
 		#print(rad)
 		pygame.draw.circle(
 				_screen, 
 				self.color, 
-				((self.x_position) + Particle.particle_radius, (self.y_position) + Particle.particle_radius), 
+				((self.x_position) + Particle.particle_radius - _camera_x_translation, (self.y_position) + Particle.particle_radius), 
 				Particle.particle_radius)
 
-	def clear_shape(self, _screen):
+	def clear_shape(self, _screen, _camera_x_translation):
 		#rad = int(Particle.particle_radius)
 		pygame.draw.circle(
 				_screen, 
 				(0, 0, 0), 
-				((self.prev_position[0]) + Particle.particle_radius, (self.prev_position[1]) + Particle.particle_radius), 
+				((self.prev_position[0]) + Particle.particle_radius - _camera_x_translation + 3, (self.prev_position[1]) + Particle.particle_radius), 
 				Particle.particle_radius)
-		self.prev_position = (self.x_position, self.y_position)
+		#self.prev_position = (self.x_position, self.y_position)

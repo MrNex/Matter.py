@@ -11,23 +11,29 @@ class MatterGame:
 		#self.screen = pygame.display.set_mode((1024, 768))
 		self.screen = pygame.display.get_surface()
 		self.clock = pygame.time.Clock()
+		self.camera_translation = 0
 		self.spawn_rate = 300
 		self.spawn_timer = 0
 		self.player = Player(self.screen.get_width() / 2, self.screen.get_height() / 2, 'solid')
-		self.obstacles = []
+		self.objects = []
+		self.objects.append(self.player)
 		self.running = 1
 		self.add_random_obstacle()
 		self.paused = False
 
 	#Adds a random obstacle to self.obstacles
 	def add_random_obstacle(self):
+		#Select random allowed state for obstacle
 		_rnd_state_index = randint(0, 3)
 		_rnd_state = None
 		if(_rnd_state_index == 0): _rnd_state = 'solid'
 		elif(_rnd_state_index == 1): _rnd_state = 'liquid'
 		else: _rnd_state = 'gas'
-		_obstacle = Obstacle(self.screen.get_width(), 0, 200, self.screen.get_height(), _rnd_state)
-		self.obstacles.append(_obstacle)
+
+		#Create obstacle
+		_obstacle = Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height(), _rnd_state)
+		#Add obstacle to list of objects
+		self.objects.append(_obstacle)
 
 
 	#Runs the game
@@ -52,29 +58,35 @@ class MatterGame:
 	
 
 			#Update objects
-			#update player
-			self.player.update()
-			#Update Loop for obstacles
-			for _obstacle in self.obstacles:
-				_obstacle.update()
-				if(not self.player.state == _obstacle.allowed_state): 
-					if(self.player.is_colliding(_obstacle)):		#Player collision detected 
-						self.player.push_left(Obstacle.movement_speed)	#Push player towards left of screen
-						if(not self.player.is_on_screen()):		#If player is no longer on screen
-							print('Game Over')			#Game over
-							self.running = 0			#Exit loop
-	
+			for _object in self.objects:
+				_object.update()
+				#Collision detection for player
+				if(self.player.is_colliding(_object)):
+					#If player is colliding with something, set player
+					#Back to previous position
+					self.player.x_position = self.player.prev_position[0]
+					self.player.y_position = self.player.prev_position[1]
+
 
 			#Screen bounds check
-			self.obstacles[:] = ifilter(lambda e: e.is_on_screen(), self.obstacles)
-
+			self.objects[:] = ifilter(lambda e: self.is_on_screen(e), self.objects)
+			if(self.player not in self.objects):
+				print("Game over")
+				self.running = 0
 
 		        #Draw Code
-			#screen.fill((0, 0, 0))					#Clear screen
-			self.player.draw(self.screen)
-			for _obstacle in self.obstacles:
-				_obstacle.draw(self.screen)
+			for _object in self.objects:
+				_object.draw(self.screen, self.camera_translation)
 			pygame.display.update()					#Update display
+
+			#Slide camera
+			self.camera_translation += 3
+
+	#returns whether or not the object is to the right of the left side of the screen.
+	#True if the object has not fallen off the screen
+	#False if the object has falled off the screen
+	def is_on_screen(self, _object):
+		return (_object.x_position + _object.dimension[0] >self.camera_translation)
 
 	def read_file(self, file_path):
 		pass

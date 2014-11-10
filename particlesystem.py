@@ -64,9 +64,9 @@ class ParticleSystem:
 		return _containment_force
 
 
-	def draw(self, _screen):
+	def draw(self, _screen, _camera_x_translation):
 		for particle in self.particles:
-			particle.draw(_screen)
+			particle.draw(_screen, _camera_x_translation)
 
 	
 
