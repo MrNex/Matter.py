@@ -37,6 +37,7 @@ class Particle(Object):
 		self.column = None
 		self.x_velocity = 0
 		self.y_velocity = 0
+		self.state = 'solid'
 
 		#Find row in lattice based on identifier
 		_row = self.identifier / 3
@@ -53,13 +54,12 @@ class Particle(Object):
 
 	def update(self, _state, _system_position, _system_radius):
 		Object.update(self)
-		if(_state == 'solid') : 
+		self.state = _state
+		if(self.state == 'solid') : 
 			self.solid_update(_system_position)
-		elif(_state == 'liquid') : 
-			self.liquid_update(_system_position, _system_radius)	#TODO: Change from solid_update
-			#self.solid_update(_system_position)
+		elif(self.state == 'liquid') : 
+			self.liquid_update(_system_position, _system_radius)
 		else : 
-			#self.solid_update(_system_position)	#TODO: Change from solid)update
 			self.gas_update(_system_position, _system_radius)
 
 		self.x_position = int(self.x_position)

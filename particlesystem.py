@@ -22,13 +22,29 @@ class ParticleSystem:
 	#Detects and resolves all particle collisions with given object.
 	#Returns true if any collisions were resolved
 	#Returns false if no collisions were found
-	def resolve_collisions(self, object):
+	def resolve_collisions(self, _object):
 		_collision_detected = False
-		for particle in self.particles:
-			if(particle.is_colliding(object)):
-				if(not self.state == 'solid'):
+		for particle in self.particles:			#Loop through particles
+
+
+			if(_object.is_colliding(particle)):	#Ask the object if we are colliding
+								#This allows any overridden is_colliding()
+								#methods from any other subclass of object to
+								#come into play. 
+								
+								#ie. The obstacle class
+								#overrides is_colliding to check
+								#for a state attribute which matches
+								#the obstacles allowed_state attribute and
+								#immediately return false if found.
+				
+				#If a collision is found, we must resolve it
+				if(not self.state == 'solid'):		#But solid particles are resolved
+									#By translating the system itself,
+									#Not the particle
+
 					#We must determine what side of the object the particle is hitting
-					_colliding_side = particle.get_colliding_side(object)
+					_colliding_side = particle.get_colliding_side(_object)
 					#Tell the particle to resolve it's own collision biatch
 					particle.resolve_collision(_colliding_side)
 				#Mark as collision being detected
