@@ -31,7 +31,14 @@ class Player(Object):
 
 		#Update particle system
 		self.particle_sys.update(self.state)
-
+	
+	#Determines whether the player is colliding with an object.
+	#Calls resolve_collisions(_object) from particlesystem.py causing
+	#particle's determined as colliding, to have their collisions be resolved.
+	#Returns true if any particle, or the player's bounding box, is colliding with the object
+	#Returns false if the object is yourself, 
+	#if the object has an allowed_state attribute which matches player's state attribute
+	#Or is no collision is detected.
 	def is_colliding(self, _object):
 		#If the object is yourself, return false- you can't collide with yourself
 		if(_object == self): return False
