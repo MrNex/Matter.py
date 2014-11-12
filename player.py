@@ -14,12 +14,16 @@ class Player(Object):
 		self.particle_sys = ParticleSystem(xPos, yPos, _dx, _dy)
 
 	def update(self):
+		Object.update(self)
 		mouseChange = pygame.mouse.get_rel()
 		x, y = mouseChange
 		x = pow(x, 2)
 		y = pow(y, 2)
 		mag = math.sqrt(x + y)
 		self.update_state(mag)
+
+		#move player
+		self.x_position += 3
 		
 		#Update particle system's position
 		self.particle_sys.x_position = self.x_position
@@ -28,12 +32,20 @@ class Player(Object):
 		#Update particle system
 		self.particle_sys.update(self.state)
 
-	def is_colliding(self, object):
-		if(object == self): return false
+	def is_colliding(self, _object):
+		#If the object is yourself, return false- you can't collide with yourself
+		if(_object == self): return False
+		#If the object has an allowed state which matches your state- return false
+		if(hasattr(_object, 'allowed_state')):
+			if(self.state == _object.allowed_state): return False
+
+		#If the oject is not yourself or an obstacle with a matching state
 		_collided = False
-		_collided = self.particle_sys.resolve_collisions(object)
+		#Test all particles to see if they are colliding
+		_collided = self.particle_sys.resolve_collisions(_object)
+		#If no particles are colliding check if the player's collision box is colliding
 		if(not _collided):
-			_collided = Object.is_colliding(self, object)
+			_collided = Object.is_colliding(self, _object)
 		return _collided
 		
 		
@@ -67,6 +79,6 @@ class Player(Object):
 				self.state_swap_points[1] = 0
 				self.state_swap_points[2] = 0
 
-	def draw(self, _screen):
+	def draw(self, _screen, _camera_x_translation):
 		#Object.draw(self, _screen)
-		self.particle_sys.draw(_screen)
+		self.particle_sys.draw(_screen, _camera_x_translation)
