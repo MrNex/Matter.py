@@ -9,6 +9,7 @@ class Object:
 		#self.prev_position = [self.position[0], self.position[1]]
 		self.prev_position = [self.position[0], self.position[1]]
 		self.dimension = [xDim, yDim]
+		self.color = (150, 150, 150)
 	
 	def update(self):
 		#self.prev_position = (self.x_position, self.y_position)
@@ -64,8 +65,6 @@ class Object:
 			_collision_side[0] = -object.dimension[0]
 		else:					#Top side
 			_collision_side[0] = object.dimension[0]
-
-		print(str(_collision_side))
 		
 		return _collision_side
 

@@ -3,7 +3,7 @@ from itertools import ifilter
 from random import randint
 from player import Player
 from boundary import Boundary
-from obstacle import Obstacle
+from object import Object
 
 
 class MatterGame:
@@ -36,19 +36,23 @@ class MatterGame:
 			#Set state
 			_rnd_state = 'solid'
 			#Create obstacle
-			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() - 300, _rnd_state))
+			#self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() - 300, _rnd_state))
+			self.objects.append(Object(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() - 300))
 		elif(_rnd_state_index == 1):
 			#Set state
 			_rnd_state = 'liquid'
 			#Create obstacle
-			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() / 2 - 150, _rnd_state))
-			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, self.screen.get_height() / 2 + 150, 200, self.screen.get_height() / 2 - 150, _rnd_state))
+			#self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() / 2 - 150, _rnd_state))
+			#self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, self.screen.get_height() / 2 + 150, 200, self.screen.get_height() / 2 - 150, _rnd_state))
+			self.objects.append(Object(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() / 2 - 150))
+			self.objects.append(Object(self.screen.get_width() + self.camera_translation, self.screen.get_height() / 2 + 150, 200, self.screen.get_height() / 2 - 150))
 			
 		else: 
 			#Set state
 			_rnd_state = 'gas'
 			#Create obstacle
-			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 300, 200, self.screen.get_height() - 300, _rnd_state))
+			#self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 300, 200, self.screen.get_height() - 300, _rnd_state))
+			self.objects.append(Object(self.screen.get_width() + self.camera_translation, 300, 200, self.screen.get_height() - 300))
 
 	#Runs the game
 	def run(self):
@@ -70,8 +74,8 @@ class MatterGame:
 				self.add_random_obstacle()
 	
 			#Just in case the player goes off the top of the screen
-			#if(self.player.position[1] < 1):
-			#	self.player.position[1] = 1
+			if(self.player.position[1] < 1):
+				self.player.position[1] = 1
 
 			#Apply global forces to player
 			self.player.velocity[1] += 0.1		#Gravity
