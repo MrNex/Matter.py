@@ -2,6 +2,7 @@ import pygame.display, pygame.time, pygame.event, math, sys
 from itertools import ifilter
 from random import randint
 from player import Player
+from boundary import Boundary
 from obstacle import Obstacle
 
 
@@ -17,6 +18,12 @@ class MatterGame:
 		self.player = Player(self.screen.get_width() / 2, self.screen.get_height() / 2, 'solid')
 		self.objects = []
 		self.objects.append(self.player)
+		_floor = Boundary(-2 * self.screen.get_width(), self.screen.get_height(), 4 * self.screen.get_width(), 100)
+		_ceiling = Boundary(-2 * self.screen.get_width(), -100, 4 * self.screen.get_width(), 100)
+		self.objects.append(_floor)
+		self.objects.append(_ceiling)
+
+
 		self.running = 1
 		self.add_random_obstacle()
 		self.paused = False
@@ -25,16 +32,23 @@ class MatterGame:
 	def add_random_obstacle(self):
 		#Select random allowed state for obstacle
 		_rnd_state_index = randint(0, 3)
-		_rnd_state = None
-		if(_rnd_state_index == 0): _rnd_state = 'solid'
-		elif(_rnd_state_index == 1): _rnd_state = 'liquid'
-		else: _rnd_state = 'gas'
-
-		#Create obstacle
-		_obstacle = Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height(), _rnd_state)
-		#Add obstacle to list of objects
-		self.objects.append(_obstacle)
-
+		if(_rnd_state_index == 0): 
+			#Set state
+			_rnd_state = 'solid'
+			#Create obstacle
+			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() - 300, _rnd_state))
+		elif(_rnd_state_index == 1):
+			#Set state
+			_rnd_state = 'liquid'
+			#Create obstacle
+			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 0, 200, self.screen.get_height() / 2 - 150, _rnd_state))
+			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, self.screen.get_height() / 2 + 150, 200, self.screen.get_height() / 2 - 150, _rnd_state))
+			
+		else: 
+			#Set state
+			_rnd_state = 'gas'
+			#Create obstacle
+			self.objects.append(Obstacle(self.screen.get_width() + self.camera_translation, 300, 200, self.screen.get_height() - 300, _rnd_state))
 
 	#Runs the game
 	def run(self):
@@ -55,7 +69,12 @@ class MatterGame:
 				self.spawn_timer = 0
 				self.add_random_obstacle()
 	
-	
+			#Just in case the player goes off the top of the screen
+			#if(self.player.position[1] < 1):
+			#	self.player.position[1] = 1
+
+			#Apply global forces to player
+			self.player.velocity[1] += 0.1		#Gravity
 
 			#Update objects
 			for _object in self.objects:
@@ -64,8 +83,8 @@ class MatterGame:
 				if(self.player.is_colliding(_object)):
 					#If player is colliding with something, set player
 					#Back to previous position
-					self.player.x_position = self.player.prev_position[0]
-					self.player.y_position = self.player.prev_position[1]
+					_colliding_side = self.player.get_colliding_side(_object)
+					self.player.resolve_collision(_colliding_side)
 
 
 			#Screen bounds check
@@ -86,7 +105,7 @@ class MatterGame:
 	#True if the object has not fallen off the screen
 	#False if the object has falled off the screen
 	def is_on_screen(self, _object):
-		return (_object.x_position + _object.dimension[0] >self.camera_translation)
+		return (_object.position[0] + _object.dimension[0] >self.camera_translation)
 
 	def read_file(self, file_path):
 		pass
@@ -99,7 +118,7 @@ class MatterGame:
 #Program starts here if this file is ran from command line
 def main():
 	pygame.init()
-	pygame.display.set_mode((0, 0), pygame.RESIZABLE)
+	pygame.display.set_mode((1024, 768), pygame.RESIZABLE)
 	game = MatterGame()
 	game.run()
 	print("closing")

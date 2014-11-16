@@ -1,7 +1,7 @@
 import pygame.draw, math
 from random import randint
-from object import Object
-class Particle(Object):
+from movableobject import MovableObject
+class Particle(MovableObject):
 	particles_in_system = None
 	particle_radius = 10
 	max_flee_weight = 1000		#Weight to use if distance away from flee_location is 0
@@ -31,12 +31,12 @@ class Particle(Object):
 
 
 	def __init__(self, _xPos, _yPos, _identification):
-		Object.__init__(self, _xPos, _yPos, Particle.particle_radius, Particle.particle_radius)
+		MovableObject.__init__(self, _xPos, _yPos, Particle.particle_radius, Particle.particle_radius)
 		self.identifier = _identification
 		self.row = None
 		self.column = None
-		self.x_velocity = 0
-		self.y_velocity = 0
+		#self.x_velocity = 0
+		#self.y_velocity = 0
 		self.state = 'solid'
 
 		#Find row in lattice based on identifier
@@ -44,7 +44,7 @@ class Particle(Object):
 		#if(_row < 1) : self.row = 0
 		#elif(_row < 2) : self.row = 1
 		#else : self.row = 2
-		self.row = _row - 1
+		self.row = _row
 
 		#Find column in lattice based on identifier
 		self.column = self.identifier % 3
@@ -53,7 +53,7 @@ class Particle(Object):
 
 
 	def update(self, _state, _system_position, _system_radius):
-		Object.update(self)
+		MovableObject.update(self)
 		self.state = _state
 		if(self.state == 'solid') : 
 			self.solid_update(_system_position)
@@ -62,9 +62,9 @@ class Particle(Object):
 		else : 
 			self.gas_update(_system_position, _system_radius)
 
-		self.x_position = int(self.x_position)
+		self.position[0] = int(self.position[0])
 		#print(self.x_position)
-		self.y_position = int(self.y_position)
+		self.position[1] = int(self.position[1])
 		#print(self.y_position)
 	
 	#Updates a particle in the solid state
@@ -81,7 +81,7 @@ class Particle(Object):
 
 		#IF the particles position is furter than Particle.max_solid_offset from it's lattice position
 		#Just seek the lattice position.
-		_dist = math.sqrt( (_lattice_x_pos - self.x_position)**2 + (_lattice_y_pos - self.y_position)**2 )
+		_dist = math.sqrt( (_lattice_x_pos - self.position[0])**2 + (_lattice_y_pos - self.position[1])**2 )
 		if(_dist > Particle.solid_max_offset) :
 			#Get seek force to seek position in lattice
 			_force = self.seek((_lattice_x_pos, _lattice_y_pos))
@@ -89,34 +89,30 @@ class Particle(Object):
 			_force = self.limit_force(_force, Particle.solid_max_ind_force) 
 
 			#Cap incremented velocity
-			_inc_velocity = [self.x_velocity + _force[0], self.y_velocity + _force[1]]
+			_inc_velocity = [self.velocity[0] + _force[0], self.velocity[1] + _force[1]]
 			_inc_velocity = self.limit_force(_inc_velocity, Particle.solid_max_velocity)
 			
 
 			#assign velocity
-			self.x_velocity = _inc_velocity[0]
-			self.y_velocity = _inc_velocity[1]
-
-		
-
+			for i in range(0, 2):
+				self.velocity[i] = _inc_velocity[i]
 
 			#Translate position by velocity
-			self.x_position += (self.x_velocity)
-			self.y_position += (self.y_velocity)
+			for i in range(0, 2):
+				self.position[i] += self.velocity[i]
+
 		#else, particle is in correct lattice position and should just vibrate
 		else :
 			#Snap to lattice position
-			self.x_position = _lattice_x_pos
-			self.y_position = _lattice_y_pos
+			self.position[0] = _lattice_x_pos
+			self.position[1] = _lattice_y_pos
 
 			#First vibrate and translate
 			_x_vib_trans = randint(-Particle.solid_max_translation, Particle.solid_max_translation)
 			_y_vib_trans = randint(-Particle.solid_max_translation, Particle.solid_max_translation)
-			self.x_position += (_x_vib_trans)
-			self.y_position += (_y_vib_trans)
+			self.position[0] += (_x_vib_trans)
+			self.position[1] += (_y_vib_trans)
 
-			#if(not self.x_velocity == 0): self.x_velocity = 0
-			#if(not self.y_velocity == 0): self.y_velocity = 0
 
 		#Set color for solid color
 		self.color = (255, 0, 0)
@@ -128,13 +124,19 @@ class Particle(Object):
 
 		for particle in Particle.particles_in_system:
 			if(not particle == self):
-				_force_inc = self.flee((particle.x_position, particle.y_position))
+				#Get particles flee force due to other particles
+				#_force_inc = self.flee((particle.position[0], particle.position[1]))
+				_force_inc = self.flee(particle.position)
+
+				#Limit it
 				_force_inc = self.limit_force(_force_inc, Particle.liquid_max_ind_force)
+				
+				#Scale it by the weight for this force in this state
 				_force_inc[0] *= Particle.liquid_repel_force
 				_force_inc[1] *= Particle.liquid_repel_force
 				
 
-				
+				#Increment net force
 				_net_force[0] += _force_inc[0]
 				_net_force[1] += _force_inc[1]
 
@@ -160,25 +162,25 @@ class Particle(Object):
 		_net_force[1] += _containment_force[1]
 
 		#Increment new velocity by net force
-		_velocity = [self.x_velocity + _net_force[0], self.y_velocity + _net_force[1]]
+		_velocity = [0, 0]
+		for i in range(0, 2):
+			_velocity[i] = self.velocity[i] + _net_force[i]
 
 		#Cap velocity
 		_velocity = self.limit_force(_velocity, Particle.liquid_max_velocity)
 		
-		#Increment velocity by net force
-		self.x_velocity = _velocity[0]
-		self.y_velocity = _velocity[1]
+		#Set velocity to the new velocity
+		for i in range(0, 2):
+			self.velocity[i] = _velocity[i]
 
 		#increment position by velocity
-		self.x_position += math.floor(self.x_velocity)
-		self.y_position += math.floor(self.y_velocity)
+		for i in range(0, 2):
+			self.position[i] += math.floor(self.velocity[i])
 
 		self.color = (0, 0, 255)
 
 
-
-
-	#Updates a particle in gas state: Unfinished
+	#Updates a particle in gas state
 	def gas_update(self, _system_position, _system_radius):
 		#Get total flee fource from all other particles in system
 		_net_force = [0, 0]
@@ -186,8 +188,9 @@ class Particle(Object):
 		for particle in Particle.particles_in_system:
 			if(not particle == self):
 				#get this particles flee force
-				_force_inc = self.flee((particle.x_position, particle.y_position))
-				
+				#_force_inc = self.flee((particle.position[0], particle.position[1]))
+				_force_inc = self.flee(particle.position)
+
 				#limit it
 				_force_inc = self.limit_force(_force_inc, Particle.gas_max_ind_force)
 				
@@ -221,18 +224,21 @@ class Particle(Object):
 		_net_force[1] += _containment_force[1]
 
 		#Increment new velocity by net force
-		_velocity = [self.x_velocity + _net_force[0], self.y_velocity + _net_force[1]]
+		_velocity = [0, 0]
+		for i in range(0, 2):
+			_velocity[i] = self.velocity[i] + _net_force[i]
+		
 
 		#Cap new velocity
 		_velocity = self.limit_force(_velocity, Particle.gas_max_velocity)
 		
 		#set velocity to new velocity
-		self.x_velocity = _velocity[0]
-		self.y_velocity = _velocity[1]
+		for i in range(0, 2):
+			self.velocity[i] = _velocity[i]
 
 		#increment position by velocity
-		self.x_position += math.floor(self.x_velocity)
-		self.y_position += math.floor(self.y_velocity)
+		for i in range(0, 2):
+			self.position[i] += math.floor(self.velocity[i])
 
 		self.color = (255, 255, 255)
 
@@ -242,9 +248,11 @@ class Particle(Object):
 
 	#returns the force vector needed to increment the velocity to get this particle to seek the given pos
 	def seek(self, _seek_position):
-		_force = [(_seek_position[0] - self.x_position), (_seek_position[1] - self.y_position)]
+		#_force = [(_seek_position[0] - self.position[0]), (_seek_position[1] - self.position[1])]
+		_force = [0,0]
+		for i in range(0, 2):
+			_force[i] = _seek_position[i] - self.position[i]
 		#find distance for seek position
-		#_dist =  math.sqrt( (_seek_position[0] - self.x_position)**2 + (_seek_position[1] - self.y_position)**2 )
 		_dist = self.get_surface_distance(_seek_position[0], _seek_position[1])
 
 		#Scale force by distance
@@ -256,10 +264,11 @@ class Particle(Object):
 
 	#returns the force vector needed to increment toe velocity to get this particle to flee the given position
 	def flee(self, _flee_position):
-		_force = [-1 * (_flee_position[0] - self.x_position), -1 * (_flee_position[1] - self.y_position)]
+		_force = [0,0]
+		for i in range(0, 2):
+			_force[i] = -1 * (_flee_position[i] - self.position[i])
+		#_force = [-1 * (_flee_position[0] - self.position[0]), -1 * (_flee_position[1] - self.position[1])]
 		#Find distance from flee position
-		#_dist =  math.sqrt( (_flee_position[0] - self.x_position)**2 + (_flee_position[1] - self.y_position)**2 )
-		
 		_dist = self.get_surface_distance(_flee_position[0], _flee_position[1])
 
 		if(_dist == 0 or _dist < 1/Particle.max_flee_weight): _dist = Particle.max_flee_weight
@@ -274,7 +283,7 @@ class Particle(Object):
 		_containment_force = [0, 0]
 
 		#Calculate particle's distance from the center of the system
-		_dist =  math.sqrt( (_system_center[0] - self.x_position)**2 + (_system_center[1] - self.y_position)**2 )
+		_dist =  math.sqrt( (_system_center[0] - self.position[0])**2 + (_system_center[1] - self.position[1])**2 )
 		
 		#Calculate the containment range
 		_containment_range = _system_radius * _containment_range_factor
@@ -305,13 +314,13 @@ class Particle(Object):
 	#Gets the distance between the surfaces of this
 	#particle and the particle at position _x_pos _y_pos
 	def get_surface_distance(self, _x_pos, _y_pos):
-		_dist = math.sqrt((self.x_position - _x_pos)**2 + (self.y_position - _y_pos)**2) - (2 * Particle.particle_radius)
+		_dist = math.sqrt((self.position[0] - _x_pos)**2 + (self.position[1] - _y_pos)**2) - (2 * Particle.particle_radius)
 		return _dist
 
 	#Reflects this particles trajectory over the normal to an axis aligned surface
 	#And pushes it out of the collision
 	def resolve_collision(self, _colliding_surface):
-		_velocity = [self.x_velocity, self.y_velocity]
+		_velocity = [self.velocity[0], self.velocity[1]]
 
 		#Find reflection axis
 		if(_colliding_surface[0] == 0): 	#Reflecting over X
@@ -320,27 +329,29 @@ class Particle(Object):
 			_velocity[1] *= -2
 
 		#Move position by negative velocity to exit colliding state
-		self.x_position += int(-1*math.floor(self.x_velocity))
-		self.y_position += int(-1*math.floor(self.y_velocity))
+		for i in range(0, 2):
+			self.position[i] += int(-1*math.floor(self.velocity[i]))
 
 		#Change velocity to new velocity
-		self.x_velocity = _velocity[0]
-		self.y_velocity = _velocity[1]
+		for i in range(0, 2):
+			self.velocity[i] = _velocity[i]
 
 	def draw_shape(self, _screen, _camera_x_translation):
-		#rad = int(Particle.particle_radius)
-		#print(rad)
 		pygame.draw.circle(
 				_screen, 
 				self.color, 
-				((self.x_position) + Particle.particle_radius - _camera_x_translation, (self.y_position) + Particle.particle_radius), 
-				Particle.particle_radius)
+				(self.position[0] + Particle.particle_radius - _camera_x_translation, 
+				self.position[1] + Particle.particle_radius), 
+				Particle.particle_radius
+				)
 
 	def clear_shape(self, _screen, _camera_x_translation):
 		#rad = int(Particle.particle_radius)
 		pygame.draw.circle(
 				_screen, 
 				(0, 0, 0), 
-				((self.prev_position[0]) + Particle.particle_radius - _camera_x_translation + 3, (self.prev_position[1]) + Particle.particle_radius), 
-				Particle.particle_radius)
+				(self.prev_position[0] + Particle.particle_radius - _camera_x_translation + 3, 
+				self.prev_position[1] + Particle.particle_radius), 
+				Particle.particle_radius
+				)
 		#self.prev_position = (self.x_position, self.y_position)

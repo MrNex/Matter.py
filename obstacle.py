@@ -1,5 +1,6 @@
 import pygame.draw
-from player import Player, Object
+from object import Object
+from player import Player
 
 #Defines an object which will allow a player to pass through the object
 #If the player's state matches the allowed state of the obstacle.
@@ -20,8 +21,8 @@ class Obstacle(Object):
 
 	def is_colliding(self, _object):
 		#If it's a player check if it's allowed
-		if(hasattr(_object, 'state')):
-			if(_object.state == self.allowed_state): 
-				return False
+		#if(hasattr(_object, 'state')):
+		#	if(_object.state == self.allowed_state): 
+		#		return False
 		#At this point, object is not allowed, test for normal collisions
 		return Object.is_colliding(self, _object)

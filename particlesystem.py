@@ -23,7 +23,6 @@ class ParticleSystem:
 	#Returns true if any collisions were resolved
 	#Returns false if no collisions were found
 	def resolve_collisions(self, _object):
-		_collision_detected = False
 		for particle in self.particles:			#Loop through particles
 
 
@@ -47,9 +46,6 @@ class ParticleSystem:
 					_colliding_side = particle.get_colliding_side(_object)
 					#Tell the particle to resolve it's own collision biatch
 					particle.resolve_collision(_colliding_side)
-				#Mark as collision being detected
-				_collision_detected = True
-		return _collision_detected
 
 	def update(self, _state):
 		self.state = _state

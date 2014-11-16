@@ -1,20 +1,23 @@
 import pygame.mouse, math
-from object import Object
+from movableobject import MovableObject
 from particlesystem import ParticleSystem
-class Player(Object):
+class Player(MovableObject):
 	swap_point_limit = 5
 	
 
 	def __init__(self, xPos, yPos, state):
-		Object.__init__(self, xPos, yPos, 60, 60)
+		MovableObject.__init__(self, xPos, yPos, 60, 60)
 		self.state = state
 		self.color = (255, 0, 0)
 		self.state_swap_points = [0, 0, 0]
 		_dx, _dy = self.dimension
 		self.particle_sys = ParticleSystem(xPos, yPos, _dx, _dy)
+		self.velocity[0] = 3
 
 	def update(self):
-		Object.update(self)
+		MovableObject.update(self)
+		
+		#Determine the state of the player
 		mouseChange = pygame.mouse.get_rel()
 		x, y = mouseChange
 		x = pow(x, 2)
@@ -22,12 +25,19 @@ class Player(Object):
 		mag = math.sqrt(x + y)
 		self.update_state(mag)
 
+		#Set the player's velocity to move right
+		self.velocity[0] = 3
+		self.velocity[1] += self.get_buoyant_force()
+
 		#move player
-		self.x_position += 3
-		
+		for i in range(0, 2):
+			self.position[i] += self.velocity[i]
+
 		#Update particle system's position
-		self.particle_sys.x_position = self.x_position
-		self.particle_sys.y_position = self.y_position
+		#self.particle_sys.x_position = self.x_position
+		self.particle_sys.x_position = self.position[0]
+		#self.particle_sys.y_position = self.y_position
+		self.particle_sys.y_position = self.position[1]
 
 		#Update particle system
 		self.particle_sys.update(self.state)
@@ -43,17 +53,11 @@ class Player(Object):
 
 		#If the oject is not yourself or an obstacle with a matching state
 		_collided = False
-		#Test all particles to see if they are colliding
-		_collided = self.particle_sys.resolve_collisions(_object)
-		#If no particles are colliding check if the player's collision box is colliding
-		if(not _collided):
-			_collided = _object.is_colliding(self)
+		#Check all particles to see if they are colliding and resolve colisions if appropriate
+		self.particle_sys.resolve_collisions(_object)
+		#check if the player's collision box is colliding objects
+		_collided = _object.is_colliding(self)
 		return _collided
-		
-		
-	def push_left(self, _trans):
-		Object.push_left(self, _trans)
-		self.particle_sys.push_left(_trans)
 
 	def update_state(self, mag):
 		if(mag == 0):
@@ -81,6 +85,12 @@ class Player(Object):
 				self.state_swap_points[1] = 0
 				self.state_swap_points[2] = 0
 
+
+	def get_buoyant_force(self):
+		if(self.state == 'solid') : return 0.0
+		if(self.state == 'liquid') : return -0.1
+		if(self.state == 'gas') : return -0.2
+
 	def draw(self, _screen, _camera_x_translation):
-		#Object.draw(self, _screen)
+		MovableObject.draw(self, _screen, _camera_x_translation)
 		self.particle_sys.draw(_screen, _camera_x_translation)
