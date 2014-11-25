@@ -9,7 +9,7 @@ class Object:
 		#self.prev_position = [self.position[0], self.position[1]]
 		self.prev_position = [self.position[0], self.position[1]]
 		self.dimension = [xDim, yDim]
-		self.color = (150, 150, 150)
+		self.color = (150, 150, 150, 100)
 	
 	def update(self):
 		#self.prev_position = (self.x_position, self.y_position)

@@ -8,7 +8,7 @@ class Player(MovableObject):
 	def __init__(self, xPos, yPos, state):
 		MovableObject.__init__(self, xPos, yPos, 60, 60)
 		self.state = state
-		self.color = (255, 0, 0)
+		self.color = (255, 0, 0, 100)
 		self.state_swap_points = [0, 0, 0]
 		_dx, _dy = self.dimension
 		self.particle_sys = ParticleSystem(xPos, yPos, _dx, _dy)
@@ -92,5 +92,5 @@ class Player(MovableObject):
 		if(self.state == 'gas') : return -0.2
 
 	def draw(self, _screen, _camera_x_translation):
-		MovableObject.draw(self, _screen, _camera_x_translation)
+		#MovableObject.draw(self, _screen, _camera_x_translation)
 		self.particle_sys.draw(_screen, _camera_x_translation)
