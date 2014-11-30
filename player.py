@@ -13,6 +13,8 @@ class Player(MovableObject):
 		_dx, _dy = self.dimension
 		self.particle_sys = ParticleSystem(xPos, yPos, _dx, _dy)
 		self.velocity[0] = 3
+		self.float_point = 350
+		self.float_range = 10
 
 	def update(self):
 		MovableObject.update(self)
@@ -88,9 +90,14 @@ class Player(MovableObject):
 
 	def get_buoyant_force(self):
 		if(self.state == 'solid') : return 0.0
-		if(self.state == 'liquid') : return -0.1
+		#if(self.state == 'liquid') : return -0.1
 		if(self.state == 'gas') : return -0.2
+		if(self.position[1]-self.float_point < self.float_range): return 0.0
+		if(self.position[1]-self.float_point > -self.float_point): return -0.2
+		if(self.position[1] < self.float_point and self.velocity[1] < 0.0): return -0.11 * abs(self.position[1] - self.float_point)
+		if(self.position[1] > self.float_point and self.velocity[1] > 0.0): return -0.09 * abs(self.position[1] - self.float_point)
+
 
 	def draw(self, _screen, _camera_x_translation):
-		#MovableObject.draw(self, _screen, _camera_x_translation)
+		MovableObject.draw(self, _screen, _camera_x_translation)
 		self.particle_sys.draw(_screen, _camera_x_translation)
