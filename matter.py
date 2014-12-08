@@ -100,6 +100,13 @@ class MatterGame:
 		        #Draw Code
 			for _object in self.objects:
 				_object.draw(self.screen, self.camera_translation)
+
+			#Create transparent surface
+			_alpha_surface = pygame.Surface((self.screen.get_width(), 600))
+			_alpha_surface.set_alpha(100)
+			_alpha_surface.fill((0, 0, 255))
+			self.screen.blit(_alpha_surface, (0, 168))
+
 			pygame.display.update()					#Update display
 
 			#Slide camera

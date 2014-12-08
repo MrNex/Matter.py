@@ -99,8 +99,19 @@ class Player(MovableObject):
 
 
 	def draw(self, _screen, _camera_x_translation):
-		MovableObject.draw(self, _screen, _camera_x_translation)
+		#MovableObject.draw(self, _screen, _camera_x_translation)
+		MovableObject.clear_shape(self, _screen, _camera_x_translation)
+		self.draw_shape(_screen, _camera_x_translation)
 		self.particle_sys.draw(_screen, _camera_x_translation)
+
+
+	def draw_shape(self, _screen, _camera_x_translation):
+		pygame.draw.rect(
+				_screen, 
+				self.color, 
+				((self.position[0] - _camera_x_translation, self.position[1]), self.dimension),
+				1
+				)
 
 	def resolve_collision(self, _colliding_surface):
 		if(_colliding_surface[0] == 0):
