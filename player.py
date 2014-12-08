@@ -101,3 +101,11 @@ class Player(MovableObject):
 	def draw(self, _screen, _camera_x_translation):
 		MovableObject.draw(self, _screen, _camera_x_translation)
 		self.particle_sys.draw(_screen, _camera_x_translation)
+
+	def resolve_collision(self, _colliding_surface):
+		if(_colliding_surface[0] == 0):
+			self.position[0] -= 4	#if collision is on X axis move left by camera speed + 1
+		else:
+			MovableObject.resolve_collision(self, _colliding_surface)
+			
+		
