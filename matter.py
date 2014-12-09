@@ -155,6 +155,8 @@ class MatterGame:
 def main():
         pygame.init()
         pygame.display.set_mode((1024, 768), pygame.RESIZABLE)
+		#test resize for my laptop (Josh)
+        #pygame.display.set_mode((768, 512), pygame.RESIZABLE)
         game = MatterGame()
         game.run()
         print("closing")
