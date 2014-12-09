@@ -1,4 +1,5 @@
 import pygame.draw
+import spritesheet
 class Object:
 
 	def __init__(self, xPos, yPos, xDim, yDim):
@@ -73,7 +74,6 @@ class Object:
 	def draw(self, _screen, _camera_x_translation):
 		self.clear_shape(_screen, _camera_x_translation)
 		self.draw_shape(_screen, _camera_x_translation)
-		
 
 	def draw_shape(self, _screen, _camera_x_translation):
 		pygame.draw.rect(

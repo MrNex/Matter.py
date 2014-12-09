@@ -26,3 +26,9 @@ class Obstacle(Object):
 		#		return False
 		#At this point, object is not allowed, test for normal collisions
 		return Object.is_colliding(self, _object)
+		
+	def draw_shape(self, _screen, _camera_x_translation):
+		self.ss = spritesheet.spritesheet('assets\coral.png')
+		# starting tiles at 128x128
+		self.image = self.ss.image_at((0, 0, 128, 128))
+		_screen.blit(image, (500, 500))
