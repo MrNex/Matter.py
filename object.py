@@ -72,7 +72,6 @@ class Object:
 
 	##Draws this object
 	def draw(self, _screen, _camera_x_translation):
-		self.clear_shape(_screen, _camera_x_translation)
 		self.draw_shape(_screen, _camera_x_translation)
 
 	def draw_shape(self, _screen, _camera_x_translation):
@@ -80,11 +79,4 @@ class Object:
 				_screen, 
 				self.color, 
 				((self.position[0] - _camera_x_translation, self.position[1]), self.dimension)
-				)
-
-	def clear_shape(self, _screen, _camera_x_translation):
-		pygame.draw.rect(
-				_screen, 
-				(0, 0, 0), 
-				((self.prev_position[0] - _camera_x_translation + 3, self.prev_position[1]), self.dimension)
 				)

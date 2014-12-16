@@ -74,7 +74,7 @@ class Player(MovableObject):
 			self.state_swap_points[1] += 1
 			if(self.state_swap_points[1] >= self.swap_point_limit):
 				self.state = 'liquid'
-				self.color = (0, 0, 255)
+				self.color = (30, 0, 120)
 				self.state_swap_points[0] = 0
 				self.state_swap_points[1] = 0
 				self.state_swap_points[2] = 0
@@ -99,8 +99,6 @@ class Player(MovableObject):
 
 
 	def draw(self, _screen, _camera_x_translation):
-		#MovableObject.draw(self, _screen, _camera_x_translation)
-		MovableObject.clear_shape(self, _screen, _camera_x_translation)
 		self.draw_shape(_screen, _camera_x_translation)
 		self.particle_sys.draw(_screen, _camera_x_translation)
 

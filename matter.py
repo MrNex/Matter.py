@@ -124,11 +124,14 @@ class MatterGame:
         	                font = pygame.font.Font(None, 36)
                 	        text = font.render("SCORE: "+str(self.score), 1, (255, 255, 255))
                         	textpos = text.get_rect()
-	                        textpos.center = (100,100)
-        	                self.screen.fill(pygame.Color("black"), (20, 50, 200, 100)) # erase a rectangle behind the text(x,y,width,height)
+	                        #textpos.center = (100,100)
+        	                #self.screen.fill(pygame.Color("black"), (20, 50, 200, 100)) # erase a rectangle behind the text(x,y,width,height)
                         
 
                 	        #Draw Code
+				#Refresh screen above water
+				self.screen.fill(pygame.Color("black"), (0, 0, self.screen.get_width(), 168))
+
                         	for _object in self.objects:
                                 	_object.draw(self.screen, self.camera_translation)
 

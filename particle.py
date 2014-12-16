@@ -177,7 +177,7 @@ class Particle(MovableObject):
 		for i in range(0, 2):
 			self.position[i] += math.floor(self.velocity[i])
 
-		self.color = (0, 0, 255)
+		self.color = (30, 0, 120)
 
 
 	#Updates a particle in gas state
