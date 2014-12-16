@@ -28,7 +28,7 @@ class Player(MovableObject):
 		self.update_state(mag)
 
 		#Set the player's velocity to move right
-		self.velocity[0] = 3
+		self.velocity[0] = 6
 		self.velocity[1] += self.get_buoyant_force()
 
 		#move player
@@ -88,11 +88,11 @@ class Player(MovableObject):
 
 	def get_buoyant_force(self):
 		if(self.state == 'solid') : return 0.0
-		if(self.state == 'gas') : return -0.2
+		if(self.state == 'gas') : return -0.4
 		if(self.position[1]-self.float_point < self.float_range): return 0.0
-		if(self.position[1]-self.float_point > -self.float_point): return -0.2
-		if(self.position[1] < self.float_point and self.velocity[1] < 0.0): return -0.11 * abs(self.position[1] - self.float_point)
-		if(self.position[1] > self.float_point and self.velocity[1] > 0.0): return -0.09 * abs(self.position[1] - self.float_point)
+		if(self.position[1]-self.float_point > -self.float_point): return -0.4
+		if(self.position[1] < self.float_point and self.velocity[1] < 0.0): return -0.21 * abs(self.position[1] - self.float_point)
+		if(self.position[1] > self.float_point and self.velocity[1] > 0.0): return -0.19 * abs(self.position[1] - self.float_point)
 
 
 	def draw(self, _screen, _camera_x_translation):
@@ -110,7 +110,7 @@ class Player(MovableObject):
 
 	def resolve_collision(self, _colliding_surface):
 		if(_colliding_surface[0] == 0):
-			self.position[0] -= 4	#if collision is on X axis move left by camera speed + 1
+			self.position[0] -= 8	#if collision is on X axis move left by camera speed + 1
 		else:
 			MovableObject.resolve_collision(self, _colliding_surface)
 			

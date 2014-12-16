@@ -96,7 +96,7 @@ class MatterGame:
                                         self.player.position[1] = 1
 
                                 #Apply global forces to player
-                                self.player.velocity[1] += 0.1          #Gravity
+                                self.player.velocity[1] += 0.2          #Gravity
 
                                 #Update objects
                                 for _object in self.objects:
@@ -153,7 +153,7 @@ class MatterGame:
                                 pygame.display.update()                 #Update display
 
                                 #Slide camera
-                                self.camera_translation += 3
+                                self.camera_translation += 6
                         else:                                   #Menu update
                                 bounds = pygame.Rect((495, 400),(100,100))
                                 titleFont = pygame.font.SysFont("Arial", 60)
