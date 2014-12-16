@@ -36,9 +36,7 @@ class Player(MovableObject):
 			self.position[i] += self.velocity[i]
 
 		#Update particle system's position
-		#self.particle_sys.x_position = self.x_position
 		self.particle_sys.x_position = self.position[0]
-		#self.particle_sys.y_position = self.y_position
 		self.particle_sys.y_position = self.position[1]
 
 		#Update particle system
@@ -90,7 +88,6 @@ class Player(MovableObject):
 
 	def get_buoyant_force(self):
 		if(self.state == 'solid') : return 0.0
-		#if(self.state == 'liquid') : return -0.1
 		if(self.state == 'gas') : return -0.2
 		if(self.position[1]-self.float_point < self.float_range): return 0.0
 		if(self.position[1]-self.float_point > -self.float_point): return -0.2

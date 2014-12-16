@@ -4,10 +4,6 @@ class Object:
 
 	def __init__(self, xPos, yPos, xDim, yDim):
 		self.position = [xPos, yPos]
-		#self.x_position = xPos
-		#self.y_position = yPos
-		#self.prev_position = [self.x_position, self.y_position]
-		#self.prev_position = [self.position[0], self.position[1]]
 		self.prev_position = [self.position[0], self.position[1]]
 		self.dimension = [xDim, yDim]
 		self.color = (150, 150, 150, 100)

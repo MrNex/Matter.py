@@ -267,7 +267,6 @@ class Particle(MovableObject):
 		_force = [0,0]
 		for i in range(0, 2):
 			_force[i] = -1 * (_flee_position[i] - self.position[i])
-		#_force = [-1 * (_flee_position[0] - self.position[0]), -1 * (_flee_position[1] - self.position[1])]
 		#Find distance from flee position
 		_dist = self.get_surface_distance(_flee_position[0], _flee_position[1])
 
@@ -344,14 +343,3 @@ class Particle(MovableObject):
 				self.position[1] + Particle.particle_radius), 
 				Particle.particle_radius
 				)
-
-	def clear_shape(self, _screen, _camera_x_translation):
-		#rad = int(Particle.particle_radius)
-		pygame.draw.circle(
-				_screen, 
-				(0, 0, 0), 
-				(self.prev_position[0] + Particle.particle_radius - _camera_x_translation + 3, 
-				self.prev_position[1] + Particle.particle_radius), 
-				Particle.particle_radius
-				)
-		#self.prev_position = (self.x_position, self.y_position)
