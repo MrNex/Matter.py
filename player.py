@@ -110,7 +110,7 @@ class Player(MovableObject):
 
 	def resolve_collision(self, _colliding_surface):
 		if(_colliding_surface[0] == 0):
-			self.position[0] -= 8	#if collision is on X axis move left by camera speed + 1
+			self.position[0] -= 12	#if collision is on X axis move left by camera speed + 1
 		else:
 			MovableObject.resolve_collision(self, _colliding_surface)
 			

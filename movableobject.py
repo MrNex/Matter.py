@@ -19,8 +19,9 @@ class MovableObject(Object):
 				self.velocity[0] *= -1 
 		elif(_colliding_surface[1] == 0):	#If the surface is horizontal, collision on Y axis
 			_resolution_velocity[1] = -2 * self.velocity[1]
+			#self.velocity[1] *= -1
 			if(abs(self.velocity[1]) > 1):
-				self.velocity[1] *= -0.2
+				self.velocity[1] *= -0.4
 			else:
 				self.velocity[1] *= -1
 		#Revert position on collision axis by adding -velocity[axis]

@@ -93,7 +93,13 @@ class MatterGame:
         
                                 #Just in case the player goes off the top of the screen
                                 if(self.player.position[1] < 1):
-                                        self.player.position[1] = 1
+                                        self.player.position[1] = 2
+					if(self.player.velocity[1] < 0):
+						self.player.velocity[1] = 0
+				elif(self.player.position[1] + self.player.dimension[1] > self.screen.get_height() - 1):
+					self.player.position[1] = self.screen.get_height() - (self.player.dimension[1] + 2)
+					if(self.player.velocity[1] > 0):
+						self.player.velocity[1] = 0
 
                                 #Apply global forces to player
                                 self.player.velocity[1] += 0.2          #Gravity

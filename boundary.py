@@ -8,5 +8,5 @@ class Boundary(Object):
 	def update(self):
 		Object.update(self)
 		#Move boundary at same speed as camera
-		self.position[0] += 3
+		self.position[0] += 6
 		
